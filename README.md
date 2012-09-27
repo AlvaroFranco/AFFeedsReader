@@ -9,7 +9,9 @@ It works like magic: just put your RSS URL. I'm working on the desing and perfor
 I've used third party frameworks for some features:
 
 -Pull to refresh: [r2h]: https://github.com/Sephiroth87/ODRefreshControl
+
 -Image Downloader: [r2h]: https://github.com/rs/SDWebImage
+
 -Loading activity indicator: [r2h]: https://github.com/jdg/MBProgressHUD
 
 Some images more:
