@@ -3,6 +3,7 @@ AFFeedsReader
 Looking for a simple feeds reader? Take a look on AFFeedsReader. Simple and... it works!
 
 ![](http://dl.dropbox.com/u/9768488/Screen%20shot%202012-09-27%20at%2019.16.29.png)
+![](http://dl.dropbox.com/u/9768488/Screen%20shot%202012-09-27%20at%2019.45.48.png)
 
 AFFeedsReader is very complete. It includes a feeds reader (obviously), pull to refresh, image downloader with cache, loading activity indicator...
 It works like magic: just put your RSS URL. I'm working on the desing and performance. 
