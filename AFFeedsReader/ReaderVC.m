@@ -18,7 +18,7 @@
     
     [super viewDidLoad];
     
-    post = [[UIWebView alloc]initWithFrame:CGRectMake(5, 10, 310, self.view.bounds.size.height - 30)];
+    post = [[UIWebView alloc]initWithFrame:CGRectMake(0, 0, 320, self.view.bounds.size.height)];
    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         KMXMLParser *parser = [[KMXMLParser alloc] initWithURL:@"http://cultofmac.com.feedsportal.com/c/33797/f/606249/index.rss" delegate:nil];
@@ -34,7 +34,7 @@
         NSString *structure =[NSString stringWithFormat:@"<html><head><style type='text/css'>iframe {width:290px; height:auto;} object {width:290px; height:auto;} blockquote {font-family:Arial;} img{width:290px; height:auto; display: block; margin-left: 0px; margin-right: auto} p {font-family:Arial;} h1 {font-family:Arial;} h2 {font-family:Arial;} h3 {font-family:Arial;} h4 {font-family:Arial;} h5 {font-family:Arial;} h6 {font-family:Arial;} li {font-family:Arial;} b {font-family:Arial;}</style></head><body>"];
         NSString *close =[NSString stringWithFormat:@"</body></html>"];
         
-        NSString *HTMLString = [NSString stringWithFormat:@"%@%@<br/>%@%@", structure, titleHTML, postHTML, close];
+        NSString *HTMLString = [NSString stringWithFormat:@"%@%@<br/><br/>%@%@", structure, titleHTML, postHTML, close];
 
         [post loadHTMLString:HTMLString baseURL:nil];
     });

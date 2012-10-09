@@ -8,8 +8,7 @@
 
 #import "MainVC.h"
 #import "ReaderVC.h"
-#import "Element.h"
-#import "DocumentRoot.h"
+#import "HTMLParser.h"
 #import "UIImageView+WebCache.h"
 #import "ODRefreshControl.h"
 
@@ -80,6 +79,39 @@
     }
 }
 
+-(NSURL*) getImageURLFromHTML: (NSString*) htmlSource {
+    
+    NSError *error = nil;
+    
+    //need to pass in a proper <html> doc for the parser to recognise it.
+    //surround the source string with <html> tags
+    htmlSource = [NSString stringWithFormat:@"<html>%@</html>", htmlSource];
+    
+    //alloc HTML parser
+    HTMLParser *parser = [[HTMLParser alloc] initWithString:htmlSource error:&error];
+    
+    //handle error
+    if (error) {
+        NSLog(@"Error: %@", error);
+        return nil;
+    }
+    
+    //get html node
+    HTMLNode *htmlNode = [parser doc];
+    
+    //get img tags
+    NSArray *inputNodes = [htmlNode findChildTags:@"img"];
+    
+    //Get src url
+    NSURL *returnURL;
+    if (inputNodes.count > 0) {
+        HTMLNode *inputNode = [inputNodes objectAtIndex:0];
+        returnURL = [NSURL URLWithString:[inputNode getAttributeNamed:@"src"]];
+    }
+    
+    return returnURL;
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -98,17 +130,12 @@
 {
     static NSString *CellIdentifier = @"Cell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-        
-	NSString *source = [NSString stringWithFormat:[[self.parseResults objectAtIndex:indexPath.row] objectForKey:@"summary"]];
-
-    DocumentRoot *document = [Element parseHTML: source];
-	Element *elements = [document selectElement: @"img"];
-    NSString* fooAttr = [elements attribute: @"src"];
-        
-    NSString *snipet = [elements contentsText];
-    snipet = ([snipet length]  > 5) ? [snipet substringToIndex: 5] : fooAttr;
-    snipet = [[elements description] stringByAppendingFormat: @"%@", fooAttr];
-                                
+    
+    NSString *source;
+    if (self.parseResults) {
+        source = [NSString stringWithFormat:@"%@",[[self.parseResults objectAtIndex:indexPath.row] objectForKey:@"summary"]];
+    }
+    
     if (cell == nil) {
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -119,7 +146,7 @@
         
         cell.textLabel.backgroundColor = [UIColor clearColor];
         cell.textLabel.textColor = [UIColor whiteColor];
-        cell.textLabel.font = [UIFont fontWithName:@"Gotham-Regular" size:13];
+        cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:13];
     }
         
     cell.textLabel.text = [[self.parseResults objectAtIndex:indexPath.row]objectForKey:@"title"];
@@ -129,8 +156,9 @@
     postImage.contentMode = UIViewContentModeScaleAspectFill;
     postImage.clipsToBounds = YES;
     cell.backgroundView = postImage;
-    
-    [postImage setImageWithURL:[NSURL URLWithString:fooAttr] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+   
+    //Set cell image
+    [postImage setImageWithURL: [self getImageURLFromHTML:source]];
     
     return cell;
 }
